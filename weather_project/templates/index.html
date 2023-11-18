@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css" />
+    <link rel="icon" href="{% static 'Elegantthemes-Beautiful-Flat-Weather.512.png' %}" type="image/x-icon">
+    <style>
+        body {
+            background-size: cover;
+            background-position: center;
+            background-height:auto;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.7)),
+                url("{% static 'pexels-pixabay-209831.jpg' %}");
+            color: #fff;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)),
+                url("{% static 'pexels-pixabay-209831.jpg' %}") center/cover;
+            color: #fff;
+            padding: 2rem 0;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .icon-title-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            width: 60%;
+            margin: auto;
+            margin-top: -1rem;
+        }
+
+        .icon-container img {
+            max-width: 50px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            color: #40B5AD;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        form {
+            margin-top: 2rem;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .box {
+            background: linear-gradient(rgba(0, 123, 255, 0.9), rgba(0, 123, 255, 0.8));
+            color: #fff;
+            border-radius: 25px;
+            overflow: auto;
+        }
+
+        .box img {
+            max-width: 90px;
+            border-radius: 50%;
+        }
+
+        .media-content {
+            margin-left: 0.5rem;
+        }
+
+        .subtitle,
+        h4,
+        .title,
+        .box p {
+            color: #fff;
+            margin-top: 0.5rem;
+        }
+
+        .button.is-info {
+            background: linear-gradient(rgba(0, 123, 255, 0.9), rgba(0, 123, 255, 0.8)) !important;
+        }
+
+        .button.is-info:hover {
+            background: rgba(0, 123, 255, 1) !important;
+        }
+
+        .button.is-danger {
+            background: linear-gradient(rgba(255, 0, 0, 0.9), rgba(255, 0, 0, 0.8)) !important;
+        }
+
+        .button.is-danger:hover {
+            background: rgba(255, 0, 0, 1) !important;
+        }
+
+        .footer {
+            background: #444;
+            color: #fff;
+            padding: 1.5rem 0;
+            text-align: center;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="hero">
+        <div class="icon-title-container">
+            <div class="icon-container">
+                <img src="{% static 'season.png' %}" alt="Weather Icon">
+            </div>
+            <h1 class="title" style="color:#40B5AD;">Weather App</h1>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-offset-3 is-6">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="field has-addons">
+                            <div class="control is-expanded">
+                                {{ form.name }}
+                            </div>
+                            <div class="control">
+                                <button class="button is-info">
+                                    Add City
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-offset-1 is-10">
+                    <div class="grid-container">
+                        {% for weather in weather_data %}
+                        <div class="box">
+                            <article class="media">
+                                <div class="media-left">
+                                    <figure class="image is-50x50">
+                                        <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png"
+                                            alt="Weather Icon">
+                                    </figure>
+                                </div>
+                                <div class="media-content">
+                                    <div class="content">
+                                        <p>
+                                            <span class="title">{{ weather.city }}</span>
+                                            <br>
+                                            <span class="subtitle">{{ weather.temperature }}° C</span>
+                                            <br>
+                                            <h4>Humidity: {{weather.humidity}}</h4>
+                                            <h4>Pressure: {{weather.pressure}}</h4>
+                                            <h4>Wind Speed: {{weather.wind_speed}}</h4>
+                                            <h4>Description:{{ weather.description }}</h4>
+                                        </p>
+                                        <form method="post" action="{% url 'delete_city' weather.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="button is-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="footer">
+        <div class="container">
+            <p class="has-text-centered">
+                Real Time Weather, Project by Suraj Patil
+            </p>
+        </div>
+    </section>
+</body>
+
+</html>
